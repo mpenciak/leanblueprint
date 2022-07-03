@@ -4,19 +4,19 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="leanblueprint",
+    name="noleanblueprint",
     version="0.0.1",
     author="Patrick Massot",
-    description="Lean prover blueprint plasTeX plugin.",
+    description="Blueprint plasTeX plugin.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),
-    package_data={'leanblueprint': ['static/*', 'templates/*', 'Packages/*',
+    package_data={'noleanblueprint': ['static/*', 'templates/*', 'Packages/*',
                                     'Packages/renderer_templates/*']},
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent"],
     python_requires='>=3.5',
-    install_requires=['plasTeX>=2.0', 'mathlibtools>=0.0.9', 'pygraphviz']
+    install_requires=['plasTeX>=2.0', 'pygraphviz']
 )

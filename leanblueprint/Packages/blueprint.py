@@ -26,7 +26,6 @@ from typing import List, Optional
 
 from jinja2 import Template
 from pygraphviz import AGraph
-from mathlibtools.lib import LeanProject
 
 from plasTeX import Command, Environment
 from plasTeX.PackageResource import (
@@ -334,42 +333,6 @@ def ProcessOptions(options, document):
             if proved:
                 proved.userdata['proved_by'] = proof
     document.addPostParseCallbacks(100, update_proofs)
-
-    def make_lean_urls() -> None:
-        """Build url for Lean declarations referred to in the blueprint"""
-        proj = LeanProject.from_path(Path(options.get('project', '../..')))
-        lean_ver = 'v{:d}.{:d}.{:d}'.format(*proj.lean_version)
-
-        gh = document.userdata.get('project_github', '')
-        base_url = {'mathlib': 'https://github.com/leanprover-community/'
-                               f'mathlib/blob/{proj.mathlib_rev}/src/',
-                    'core': 'https://github.com/leanprover-community/lean/blob/'
-                            f'{lean_ver}/library/init/',
-                    proj.name: f'{gh}/blob/{proj.rev}/src/'}
-        try:
-            with (proj.directory/'decls.pickle').open('rb') as data:
-                decls = pickle.load(data)
-        except FileNotFoundError:
-            log.warning('Could not find decls.pickle')
-            return
-
-        nodes = []
-        for thm_type in document.userdata['thm_types']:
-            nodes += document.getElementsByTagName(thm_type)
-        for node in nodes:
-            leandecls = node.userdata.get('leandecls', [])
-            lean_urls = []
-            for leandecl in leandecls:
-                if leandecl not in decls:
-                    print(f'Lean declaration {leandecl} not found')
-                    continue
-                info = decls[leandecl]
-                lean_urls.append(
-                    (leandecl,
-                     f'{base_url[info.origin]}{info.filepath}#L{info.line}'))
-
-            node.userdata['lean_urls'] = lean_urls
-    document.addPostParseCallbacks(100, make_lean_urls)
 
     ## Dep graph
     title = options.get('title', 'Dependencies')

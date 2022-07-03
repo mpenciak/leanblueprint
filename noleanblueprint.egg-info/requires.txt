@@ -1,2 +1,0 @@
-plasTeX>=2.0
-pygraphviz
